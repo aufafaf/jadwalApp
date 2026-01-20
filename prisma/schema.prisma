@@ -1,8 +1,42 @@
+// // This is your Prisma schema file,
+// // learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// generator client {
+//     provider = "prisma-client-js"
+// }
+
+// datasource db {
+//     provider = "postgresql"
+//     url      = env("DATABASE_URL")
+// }
+
+// model DaySchedule {
+//     id        String     @id @default(cuid())
+//     day       String
+//     date      String
+//     schedules Schedule[]
+//     createdAt DateTime   @default(now())
+//     updatedAt DateTime   @updatedAt
+// }
+
+// model Schedule {
+//     id          String      @id @default(cuid())
+//     startTime   String
+//     endTime     String
+//     activity    String
+//     completed   Boolean     @default(false)
+//     daySchedule DaySchedule @relation(fields: [dayId], references: [id], onDelete: Cascade)
+//     dayId       String
+//     createdAt   DateTime    @default(now())
+//     updatedAt   DateTime    @updatedAt
+// }
+
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
     provider = "prisma-client-js"
+    output   = "../node_modules/.prisma/client"
 }
 
 datasource db {
