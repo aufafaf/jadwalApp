@@ -1,5 +1,4 @@
-import Image from "next/image";
-import WeeklyScheduler from "./jadwal";
+import WeeklyScheduler from "./jadwal.tsx";
 
 export default function Home() {
   return (
