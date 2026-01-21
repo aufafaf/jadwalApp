@@ -1,6 +1,8 @@
-import dynamic from 'next/dynamic';
+"use client";
 
-const WeeklyScheduler = dynamic(() => import('./jadwal'), { ssr: false });
+import dynamic from "next/dynamic";
+
+const WeeklyScheduler = dynamic(() => import("./jadwal"), { ssr: false });
 
 export default function Home() {
   return (
