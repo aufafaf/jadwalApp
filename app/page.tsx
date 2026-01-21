@@ -1,4 +1,6 @@
-import WeeklyScheduler from "./jadwal.tsx";
+import dynamic from 'next/dynamic';
+
+const WeeklyScheduler = dynamic(() => import('./jadwal'), { ssr: false });
 
 export default function Home() {
   return (
