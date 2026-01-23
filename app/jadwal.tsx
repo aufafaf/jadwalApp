@@ -41,6 +41,9 @@ const WeeklyScheduler = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [savingDay, setSavingDay] = useState<string | null>(null);
+  const [deletingDay, setDeletingDay] = useState<string | null>(null);
+  const [deletingSchedule, setDeletingSchedule] = useState<string | null>(null);
+  const [creatingDay, setCreatingDay] = useState(false);
 
   // Load data dari database - HANYA saat component mount atau manual refresh
   const loadData = async () => {
@@ -171,22 +174,29 @@ const WeeklyScheduler = () => {
     setNewActivity("");
   };
 
-  const deleteSchedule = (dayId: string, scheduleId: string) => {
+  const deleteSchedule = async (dayId: string, scheduleId: string) => {
+    setDeletingSchedule(scheduleId);
+    await new Promise((resolve) => setTimeout(resolve, 800));
+
     const updatedDay = weekData.find((d) => d.id === dayId);
     if (updatedDay) {
       const updatedSchedules = updatedDay.schedules.filter(
         (s) => s.id !== scheduleId,
       );
-      updateFirebase(dayId, {
+      await updateFirebase(dayId, {
         day: updatedDay.day,
         date: updatedDay.date,
         schedules: updatedSchedules,
       });
     }
+    setDeletingSchedule(null);
   };
 
-  const deleteDay = (dayId: string) => {
-    deleteFromFirebase(dayId);
+  const deleteDay = async (dayId: string) => {
+    setDeletingDay(dayId);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await deleteFromFirebase(dayId);
+    setDeletingDay(null);
   };
 
   const toggleComplete = (dayId: string, scheduleId: string) => {
@@ -220,6 +230,7 @@ const WeeklyScheduler = () => {
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
+              style={{ cursor: "pointer" }}
               onClick={() => setCurrentPage("view")}
               className="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
             >
@@ -227,6 +238,7 @@ const WeeklyScheduler = () => {
               Lihat Jadwal
             </button>
             <button
+              style={{ cursor: "pointer" }}
               onClick={() => setCurrentPage("create")}
               className="px-8 py-4 bg-green-600 hover:bg-green-700 text-white rounded-xl font-semibold text-lg transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
             >
@@ -246,6 +258,7 @@ const WeeklyScheduler = () => {
         <div className="max-w-7xl mx-auto">
           <div className="mb-8 flex items-center justify-between">
             <button
+              style={{ cursor: "pointer" }}
               onClick={() => setCurrentPage("menu")}
               className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all text-gray-800"
             >
@@ -254,6 +267,7 @@ const WeeklyScheduler = () => {
             </button>
             <h1 className="text-3xl font-bold text-gray-800">Jadwal</h1>
             <button
+              style={{ cursor: "pointer" }}
               onClick={loadData}
               disabled={refreshing}
               className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow hover:shadow-md transition-all text-gray-800 disabled:opacity-50"
@@ -280,6 +294,7 @@ const WeeklyScheduler = () => {
                 Buat jadwal pertamamu untuk memulai
               </p>
               <button
+                style={{ cursor: "pointer" }}
                 onClick={() => setCurrentPage("create")}
                 className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-medium transition-all shadow-lg"
               >
@@ -309,14 +324,26 @@ const WeeklyScheduler = () => {
                         </p>
                       </div>
                     )}
+                    {deletingDay === day.id && (
+                      <div className="absolute inset-0 bg-red-50/90 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+                        <div className="animate-spin rounded-full h-12 w-12 border-4 border-red-500 border-t-transparent mb-3"></div>
+                        <p className="text-red-600 font-semibold text-lg">
+                          Menghapus jadwal...
+                        </p>
+                      </div>
+                    )}
                     <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 text-white relative">
                       <h2 className="text-xl font-bold">{day.day}</h2>
                       <p className="text-sm opacity-90">{day.date}</p>
                       <button
+                        style={{ cursor: "pointer" }}
                         onClick={() => deleteDay(day.id)}
-                        className="absolute top-3 right-3 p-1 hover:bg-white/20 rounded transition-colors"
+                        disabled={deletingDay === day.id}
+                        className="absolute top-3 right-3 p-1 hover:bg-white/20 rounded transition-colors cursor-pointer disabled:opacity-50"
                       >
-                        <Trash2 className="w-4 h-4" />
+                        <Trash2
+                          className={`w-4 h-4 ${deletingDay === day.id ? "animate-spin" : ""}`}
+                        />
                       </button>
                     </div>
 
@@ -336,6 +363,7 @@ const WeeklyScheduler = () => {
                             }`}
                           >
                             <button
+                              style={{ cursor: "pointer" }}
                               onClick={() =>
                                 toggleComplete(day.id, schedule.id)
                               }
@@ -363,12 +391,16 @@ const WeeklyScheduler = () => {
                             </div>
 
                             <button
+                              style={{ cursor: "pointer" }}
                               onClick={() =>
                                 deleteSchedule(day.id, schedule.id)
                               }
-                              className="text-red-400 hover:text-red-600 transition-colors shrink-0"
+                              disabled={deletingSchedule === schedule.id}
+                              className="text-red-400 hover:text-red-600 transition-colors shrink-0 cursor-pointer disabled:opacity-30"
                             >
-                              <Trash2 className="w-4 h-4" />
+                              <Trash2
+                                className={`w-4 h-4 ${deletingSchedule === schedule.id ? "animate-spin" : ""}`}
+                              />
                             </button>
                           </div>
                         ))
@@ -377,6 +409,7 @@ const WeeklyScheduler = () => {
 
                     <div className="p-4 border-t-2 border-gray-100">
                       <button
+                        style={{ cursor: "pointer" }}
                         onClick={() =>
                           setSelectedDay(selectedDay === day.id ? null : day.id)
                         }
@@ -417,6 +450,7 @@ const WeeklyScheduler = () => {
                           />
                           <div className="flex gap-2">
                             <button
+                              style={{ cursor: "pointer" }}
                               onClick={() => addSchedule(day.id)}
                               disabled={savingDay === day.id}
                               className="flex-1 py-2 bg-green-500 hover:bg-green-600 text-white rounded-lg font-medium transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
@@ -429,6 +463,7 @@ const WeeklyScheduler = () => {
                                 : "Simpan"}
                             </button>
                             <button
+                              style={{ cursor: "pointer" }}
                               onClick={() => {
                                 setSelectedDay(null);
                                 setNewActivity("");
@@ -454,6 +489,7 @@ const WeeklyScheduler = () => {
   const handleCreateDay = async () => {
     if (!createDate.trim()) return;
 
+    setCreatingDay(true);
     const date = new Date(createDate);
     const dayNames = [
       "Minggu",
@@ -465,7 +501,6 @@ const WeeklyScheduler = () => {
       "Sabtu",
     ];
     const dayName = dayNames[date.getDay()];
-
     const options: Intl.DateTimeFormatOptions = {
       day: "numeric",
       month: "long",
@@ -474,6 +509,9 @@ const WeeklyScheduler = () => {
     const formattedDate = date.toLocaleDateString("id-ID", options);
 
     await createNewDay(dayName, formattedDate);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    setCreatingDay(false);
     setCreateDate("");
     setCurrentPage("view");
   };
@@ -482,6 +520,7 @@ const WeeklyScheduler = () => {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 flex items-center justify-center">
       <div className="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full">
         <button
+          style={{ cursor: "pointer" }}
           onClick={() => setCurrentPage("menu")}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-6"
         >
@@ -517,10 +556,15 @@ const WeeklyScheduler = () => {
           </div>
 
           <button
+            style={{ cursor: "pointer" }}
             onClick={handleCreateDay}
-            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl mt-6"
+            disabled={creatingDay}
+            className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold transition-all shadow-lg hover:shadow-xl mt-6 cursor-pointer disabled:opacity-50 flex items-center justify-center gap-2"
           >
-            Buat Jadwal
+            {creatingDay && (
+              <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+            )}
+            {creatingDay ? "Membuat Jadwal..." : "Buat Jadwal"}
           </button>
         </div>
       </div>
