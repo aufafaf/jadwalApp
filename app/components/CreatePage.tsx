@@ -28,7 +28,7 @@ export const CreatePage = ({ onNavigate, onCreateDay }: any) => {
   };
 
   return (
-    <div className={`min-h-screen ${isDark ? 'bg-black' : 'bg-gradient-to-br from-blue-50 to-indigo-50'} p-4 flex items-center justify-center transition-colors`}>
+    <div className={`min-h-screen ${isDark ? 'bg-black' : 'bg-gradient-to-br from-cyan-50 to-blue-50'} p-4 flex items-center justify-center transition-colors`}>
       <div className={`${isDark ? 'bg-gray-900 border-gray-800' : 'bg-white border-gray-100'} border rounded-3xl shadow-2xl p-8 max-w-md w-full backdrop-blur-xl`}>
         <button
           onClick={() => onNavigate("menu")}

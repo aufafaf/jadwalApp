@@ -10,16 +10,16 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
-  // Load dari localStorage langsung di initial state
+  // Default ke DARK MODE (cyberpunk theme)
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== "undefined") {
       const savedTheme = localStorage.getItem("theme");
-      return savedTheme === "dark";
+      // Kalau belum pernah set, default dark
+      return savedTheme ? savedTheme === "dark" : true;
     }
-    return false;
+    return true; // Default dark
   });
 
-  // Hanya save ke localStorage, tidak set state
   useEffect(() => {
     if (typeof window !== "undefined") {
       localStorage.setItem("theme", isDark ? "dark" : "light");
