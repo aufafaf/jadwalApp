@@ -14,4 +14,4 @@ export interface DaySchedule {
   createdAt?: number;
 }
 
-export type Page = "menu" | "view" | "create";
+export type Page = "menu" | "view" | "create" | "settings";

@@ -40,10 +40,15 @@ export const useScheduleData = () => {
     }
   };
 
-  const updateDay = async (dayId: string, updatedData: Partial<DaySchedule>) => {
+  const updateDay = async (
+    dayId: string,
+    updatedData: Partial<DaySchedule>,
+  ) => {
     try {
       const updated = await scheduleService.update(dayId, updatedData);
-      setWeekData((prev) => prev.map((item) => (item.id === dayId ? updated : item)));
+      setWeekData((prev) =>
+        prev.map((item) => (item.id === dayId ? updated : item)),
+      );
     } catch (error) {
       console.error("Error updating day:", error);
       throw error;
@@ -64,8 +69,8 @@ export const useScheduleData = () => {
     const day = weekData.find((d) => d.id === dayId);
     if (!day) return;
 
-    const updatedSchedules = [...day.schedules, schedule].sort(
-      (a, b) => a.startTime.localeCompare(b.startTime)
+    const updatedSchedules = [...day.schedules, schedule].sort((a, b) =>
+      a.startTime.localeCompare(b.startTime),
     );
 
     await updateDay(dayId, {
@@ -94,7 +99,7 @@ export const useScheduleData = () => {
     const updatedSchedules = day.schedules.map((schedule) =>
       schedule.id === scheduleId
         ? { ...schedule, completed: !schedule.completed }
-        : schedule
+        : schedule,
     );
 
     await updateDay(dayId, {

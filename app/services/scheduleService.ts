@@ -21,7 +21,10 @@ export const scheduleService = {
     return response.json();
   },
 
-  async update(dayId: string, updatedData: Partial<DaySchedule>): Promise<DaySchedule> {
+  async update(
+    dayId: string,
+    updatedData: Partial<DaySchedule>,
+  ): Promise<DaySchedule> {
     const response = await fetch(`/api/schedules/${dayId}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },

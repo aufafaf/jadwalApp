@@ -7,6 +7,7 @@ import { ThemeProvider } from "./context/ThemeContext";
 import { MenuPage } from "./components/MenuPage";
 import { ViewPage } from "./components/ViewPage";
 import { CreatePage } from "./components/CreatePage";
+import { SettingsPage } from "./components/SettingsPage";
 
 const WeeklyScheduler = () => {
   const [currentPage, setCurrentPage] = useState<Page>("menu");
@@ -42,6 +43,9 @@ const WeeklyScheduler = () => {
       )}
       {currentPage === "create" && (
         <CreatePage onNavigate={setCurrentPage} onCreateDay={createDay} />
+      )}
+      {currentPage === "settings" && (
+        <SettingsPage onNavigate={setCurrentPage} />
       )}
     </ThemeProvider>
   );
