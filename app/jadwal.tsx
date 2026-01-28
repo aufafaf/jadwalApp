@@ -8,6 +8,8 @@ import { MenuPage } from "./components/MenuPage";
 import { ViewPage } from "./components/ViewPage";
 import { CreatePage } from "./components/CreatePage";
 import { SettingsPage } from "./components/SettingsPage";
+import { AnalyticsPage } from "./components/AnalyticsPage";
+
 
 const WeeklyScheduler = () => {
   const [currentPage, setCurrentPage] = useState<Page>("menu");
@@ -47,6 +49,9 @@ const WeeklyScheduler = () => {
       {currentPage === "settings" && (
         <SettingsPage onNavigate={setCurrentPage} />
       )}
+      {currentPage === "analytics" && (
+  <AnalyticsPage onNavigate={setCurrentPage} weekData={weekData} />
+)}
     </ThemeProvider>
   );
 };
