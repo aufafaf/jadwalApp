@@ -19,6 +19,9 @@ import {
   Flame,
 } from "lucide-react";
 import { useTheme } from "../context/ThemeContext";
+import { useState } from "react";
+import { AuthModal } from "./AuthModal";
+import { UserDropdown } from "./UserDropdown";
 
 interface MenuPageProps {
   onNavigate: (
@@ -40,6 +43,8 @@ interface MenuPageProps {
 
 export const MenuPage = ({ onNavigate, weekData = [] }: MenuPageProps) => {
   const { isDark, toggleTheme } = useTheme();
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   // Stats calculations
   const totalSchedules = weekData.length;
@@ -222,9 +227,16 @@ export const MenuPage = ({ onNavigate, weekData = [] }: MenuPageProps) => {
                 <span className="absolute top-0.5 right-0.5 w-1.5 h-1.5 bg-cyan-400 rounded-full"></span>
               </button>
 
-              <div className="w-7 h-7 bg-gradient-to-br from-cyan-400 to-blue-500 rounded-full flex items-center justify-center">
-                <User className="w-3.5 h-3.5 text-white" />
-              </div>
+              <UserDropdown
+                isLoggedIn={isLoggedIn}
+                onLoginClick={() => setShowAuthModal(true)}
+                onProfileClick={() => alert("Profile - Coming soon!")}
+                onSettingsClick={() => onNavigate("settings")}
+                onLogoutClick={() => {
+                  setIsLoggedIn(false);
+                  alert("Logged out successfully!");
+                }}
+              />
             </div>
           </div>
         </div>
@@ -515,6 +527,10 @@ export const MenuPage = ({ onNavigate, weekData = [] }: MenuPageProps) => {
           </div>
         </div>
       </div>
+      <AuthModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+      />
     </div>
   );
 };

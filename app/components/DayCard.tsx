@@ -72,11 +72,22 @@ export const DayCard = ({
 
   return (
     <div
-      onClick={!isExpanded ? onExpand : undefined}
-      className={`${isDark ? "bg-gray-900 border-gray-800" : "bg-white border-gray-200"} border rounded-md shadow-sm overflow-hidden hover:shadow-md transition-all flex flex-col relative ${
-        savingDay === day.id ? "opacity-50" : ""
-      } ${!isExpanded ? "cursor-pointer" : ""}`}
+      className={`group ${isDark ? "bg-[#0f0f0f] border-gray-800" : "bg-white border-gray-200"} border rounded-md transition-all duration-300 flex flex-col relative overflow-hidden
+    hover:shadow-2xl hover:scale-[1.02] hover:-translate-y-1
+    ${isDark ? "hover:border-cyan-500/50 hover:shadow-cyan-500/10" : "hover:border-cyan-500/50 hover:shadow-cyan-500/20"}
+  `}
+      style={{
+        transformStyle: "preserve-3d",
+        backfaceVisibility: "hidden",
+      }}
     >
+      <div
+        className={`absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none ${
+          isDark
+            ? "bg-gradient-to-br from-cyan-500/5 via-transparent to-blue-500/5"
+            : "bg-gradient-to-br from-cyan-500/10 via-transparent to-blue-500/10"
+        }`}
+      />
       {/* Loading Overlays */}
       {savingDay === day.id && (
         <div className="absolute inset-0 bg-black/60 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
